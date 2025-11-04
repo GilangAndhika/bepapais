@@ -42,10 +42,12 @@ func SetupRoutes(
 
 	// --- Grup API Publik (untuk frontend React) ---
 	api := app.Group("/api")
-	api.Get("/locations", locationHandler.GetAllLocations)     // GET /api/locations
-	api.Get("/locations/:id", locationHandler.GetLocationByID) // GET /api/locations/123
-	api.Get("/cameras", cameraHandler.GetAllCameras)           // GET /api/cameras
-	api.Get("/cameras/:id", cameraHandler.GetCameraByID)       // GET /api/cameras/123
+	api.Get("/locations", locationHandler.GetAllLocations)                        // GET /api/locations
+	api.Get("/locations/:id", locationHandler.GetLocationByID)                    // GET /api/locations/123
+	api.Get("/cameras", cameraHandler.GetAllCameras)                              // GET /api/cameras
+	api.Get("/cameras/:id", cameraHandler.GetCameraByID)                          // GET /api/cameras/123
+	api.Get("/cameras/search/:query", cameraHandler.SearchCameras)                // GET /api/cameras/search/simpang
+	api.Get("/cameras/location/:location_id", cameraHandler.GetCamerasByLocation) // GET /api/cameras/location/67d...
 
 	// --- Grup API Admin (perlu token) ---
 	admin := api.Group("/admin")

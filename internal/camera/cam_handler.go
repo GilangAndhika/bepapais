@@ -84,3 +84,33 @@ func (h *CameraHandler) DeleteCamera(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Kamera berhasil dihapus"})
 }
+
+// SearchCameras (Publik)
+func (h *CameraHandler) SearchCameras(c *fiber.Ctx) error {
+	query := c.Params("query")
+	if query == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Query pencarian tidak boleh kosong"})
+	}
+
+	cams, err := h.service.SearchCameras(c.Context(), query)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(cams)
+}
+
+// GetCamerasByLocation (Publik)
+func (h *CameraHandler) GetCamerasByLocation(c *fiber.Ctx) error {
+	locationID := c.Params("location_id")
+	if locationID == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Location ID tidak boleh kosong"})
+	}
+	
+	// (Bonus: Cek apakah locationID valid, misal: cek ke location_service)
+
+	cams, err := h.service.GetCamerasByLocation(c.Context(), locationID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(cams)
+}

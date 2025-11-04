@@ -23,7 +23,9 @@ type Service interface {
 	GetCameraByID(ctx context.Context, id string) (*models.Camera, error)
 	UpdateCamera(ctx context.Context, id string, cam *models.Camera) error
 	DeleteCamera(ctx context.Context, id string) error
-	// (Kita tambahkan 'StartAllStreams' di main.go saja agar lebih rapi)
+	
+	SearchCameras(ctx context.Context, query string) ([]models.Camera, error)
+	GetCamerasByLocation(ctx context.Context, locationID string) ([]models.Camera, error)
 }
 
 type service struct {
@@ -135,4 +137,12 @@ func (s *service) DeleteCamera(ctx context.Context, id string) error {
 	os.RemoveAll(filepath.Join("media", id))
 	
 	return nil
+}
+
+func (s *service) SearchCameras(ctx context.Context, query string) ([]models.Camera, error) {
+	return s.repo.SearchEnabledByName(ctx, query)
+}
+
+func (s *service) GetCamerasByLocation(ctx context.Context, locationID string) ([]models.Camera, error) {
+	return s.repo.GetEnabledByLocation(ctx, locationID)
 }
