@@ -1,39 +1,55 @@
 package api
 
 import (
+	"github.com/GilangAndhika/bepapais/internal/auth"
+	"github.com/GilangAndhika/bepapais/internal/api/middleware"
+	"github.com/GilangAndhika/bepapais/internal/config"
+	"github.com/GilangAndhika/bepapais/internal/location"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 // SetupRoutes mengkonfigurasi semua rute aplikasi
-// Nantinya kita akan tambahkan parameter (handler) di sini
-func SetupRoutes(app *fiber.App) {
+func SetupRoutes(
+	app *fiber.App,
+	cfg *config.Config,
+	authHandler *auth.AuthHandler,
+	locationHandler *location.LocationHandler,
+) {
 
 	// Middleware
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "*", // Izinkan semua
+		AllowOrigins: "*",
 		AllowMethods: "GET,POST,PUT,DELETE",
 	}))
 	app.Use(logger.New())
 
+	// Middleware autentikasi
+	authWare := middleware.Protected(cfg) // <-- INISIALISASI MIDDLEWARE
+
 	// Rute publik
-	// Rute ini untuk mengecek apakah server hidup
 	app.Get("/health", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"status":  "healthy",
 			"message": "Selamat Datang di Papais CCTV API",
 		})
 	})
-	
-	// Sajikan folder 'media' (HLS) sebagai '/live'
-	// ./media/cctv_01/index.m3u8 -> /live/cctv_01/index.m3u8
 	app.Static("/live", "./media")
 
-	// Grup API
-	// api := app.Group("/api")
+	// --- Grup API Publik (untuk frontend React) ---
+	api := app.Group("/api")
+	api.Get("/locations", locationHandler.GetAllLocations)     // GET /api/locations
+	api.Get("/locations/:id", locationHandler.GetLocationByID) // GET /api/locations/123
 
-	// Rute Admin (akan kita tambahkan nanti)
-	// admin := api.Group("/admin")
-	// admin.Post("/login", ...)
+	// --- Grup API Admin (perlu token) ---
+	admin := api.Group("/admin")
+	admin.Post("/login", authHandler.Login) // POST /api/admin/login
+
+	// --- Rute Admin yang Dilindungi ---
+	// Rute di bawah ini memerlukan "Bearer [token]" di header
+	admin.Post("/locations", authWare, locationHandler.CreateLocation)     // POST /api/admin/locations
+	admin.Put("/locations/:id", authWare, locationHandler.UpdateLocation)     // PUT /api/admin/locations/123
+	admin.Delete("/locations/:id", authWare, locationHandler.DeleteLocation) // DELETE /api/admin/locations/123
 }
