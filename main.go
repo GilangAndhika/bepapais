@@ -71,12 +71,15 @@ func main() {
 	// 5. Siapkan Rute
 	api.SetupRoutes(app, cfg, authHandler, locationHandler, cameraHandler)
 
-	// 6. Mulai Stream yang Aktif
-	// Ganti blok ini dengan fungsi helper kita
-	go startInitialStreams(cameraRepo, streamManager) // <-- INI DIA PERUBAHANNYA
+	// 5a. Sajikan file HLS (m3u8 dan .ts) sebagai file statis
+	// Ini akan memetakan permintaan ke /live/... ke file di dalam folder ./streams/...
+	app.Static("/live", "./media")
 
-	// 7. Jalankan Server
-	serverAddr := ":" + cfg.ServerPort
-	log.Printf("Server berjalan di http://localhost%s", serverAddr)
-	log.Fatal(app.Listen(serverAddr))
+
+	// 6. Mulai Stream yang Aktif
+	go startInitialStreams(cameraRepo, streamManager)
+
+	// 7. Mulai Server
+	log.Printf("Server berjalan di http://localhost:%s", cfg.ServerPort)
+	log.Fatal(app.Listen(":" + cfg.ServerPort))
 }
