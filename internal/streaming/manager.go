@@ -11,7 +11,7 @@ import (
 	"github.com/GilangAndhika/bepapais/internal/models"
 )
 
-const FFMPEG_PATH = "ffmpeg" 
+const FFMPEG_PATH = "./ffmpeg.exe" // Pastikan ffmpeg ada di PATH
 
 // Manager mengelola semua proses FFmpeg yang aktif
 type Manager struct {

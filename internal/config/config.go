@@ -22,18 +22,10 @@ func NewConfig() *Config {
 		log.Println("Peringatan: Tidak dapat menemukan file .env, menggunakan environment variables sistem.")
 	}
 
-	// Ambil "PORT" (disediakan oleh Heroku)
-	port := os.Getenv("PORT")
-	
-	// Jika "PORT" tidak ada, ambil "SERVER_PORT" (dari file .env lokal Anda)
-	if port == "" {
-		port = getEnv("SERVER_PORT", "8000") // Gunakan helper Anda
-	}
-
 	return &Config{
 		MongoURI:   getEnv("MONGO_URI", "mongodb://localhost:27017"),
 		DBName:     getEnv("DB_NAME", "papais_cctv"),
-		ServerPort: port, // <-- Gunakan variabel 'port' yang sudah pintar di sini
+		ServerPort: getEnv("SERVER_PORT", "8000"),
 		JWTSecret:  getEnv("JWT_SECRET", "super-secret-key"),
 	}
 }
