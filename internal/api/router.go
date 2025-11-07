@@ -38,6 +38,15 @@ func SetupRoutes(
 			"message": "Selamat Datang di Papais CCTV API",
 		})
 	})
+
+	app.Use("/live", func(c *fiber.Ctx) error {
+        c.Set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate")
+        c.Set("Pragma", "no-cache")
+        c.Set("Expires", "0")
+        c.Set("Surrogate-Control", "no-store")
+        return c.Next()
+    })
+	
 	app.Static("/live", "./media")
 
 	// --- Grup API Publik (untuk frontend React) ---

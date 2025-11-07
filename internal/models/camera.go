@@ -8,6 +8,8 @@ type Camera struct {
 	Name         string       `json:"name" bson:"name"`
 	LocationText string       `json:"location_text" bson:"location_text"`
 	LocationID   string       `json:"location_id" bson:"location_id"`
+	Latitude     float64      `json:"latitude" bson:"latitude"`
+	Longitude    float64      `json:"longitude" bson:"longitude"`
 	Source       CameraSource `json:"source" bson:"source"`
 	Features     Features     `json:"features" bson:"features"`
 	Enabled      bool         `json:"enabled" bson:"enabled"`

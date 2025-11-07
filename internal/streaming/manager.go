@@ -65,17 +65,12 @@ func (m *Manager) StartStream(cam models.Camera) {
 		"-rtsp_transport", "tcp",
 		"-i", rtspURL,
 		
-		// --- BLOK BARU UNTUK RE-ENCODING ---
-		"-c:v", "libx264",      // Paksa encode ke H.264
-		"-preset", "ultrafast", // Gunakan CPU seminimal mungkin
-		"-tune", "zerolatency", // Optimasi untuk latensi rendah (live)
-		"-b:v", "1000k",        // Batasi bitrate video ke 1000k (1 Mbps)
-		// ---------------------------------
+		"-c:v", "copy", // Langsung salin stream video (sangat cepat, 0% CPU)
 
 		"-c:a", "copy", // Biarkan audio disalin (jika ada)
 		"-f", "hls",
-		"-hls_time", "2",
-		"-hls_list_size", "3",
+		"-hls_time", "4",
+		"-hls_list_size", "5",
 		"-hls_flags", "delete_segments",
 		"-loglevel", "error",  // Hanya tampilkan error, agar terminal bersih
 		playlistPath,
