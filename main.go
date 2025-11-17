@@ -48,7 +48,7 @@ func main() {
 	streamManager := streaming.NewManager()
 
 	// --- Auth ---
-	authCollection := db.Collection("admins")
+	authCollection := db.Collection("admin")
 	authRepo := auth.NewAuthRepository(authCollection)
 	authService := auth.NewAuthService(authRepo, cfg.JWTSecret)
 	authHandler := auth.NewAuthHandler(authService)
